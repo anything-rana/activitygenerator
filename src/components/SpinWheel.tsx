@@ -14,6 +14,14 @@ function polar(cx: number, cy: number, r: number, angleDeg: number) {
 }
 
 function slicePath(index: number, total: number) {
+  return sliceGeometry(index, total);
+}
+
+function truncate(label: string) {
+  return label.length > 22 ? `${label.slice(0, 21)}…` : label;
+}
+
+function sliceGeometry(index: number, total: number) {
   const step = 360 / total;
   const start = index * step;
   const end = start + step;
@@ -89,27 +97,32 @@ export function SpinWheel({
         <svg viewBox="0 0 100 100" className="size-full" shapeRendering="geometricPrecision" aria-hidden>
           <circle cx="50" cy="50" r="49.5" fill="var(--card)" />
           {slices.map((slice, i) => (
-            <g key={slice.id}>
-              <path
-                d={paths[i]}
-                fill={SLICE_FILLS[i % 2] ?? "var(--card)"}
-                stroke="var(--border)"
-                strokeWidth="0.4"
-              />
-              <text
-                x="45"
-                y="50.4"
-                fontSize="3.4"
-                fontWeight="700"
-                fill={i % 2 === 0 ? "var(--primary-foreground)" : "var(--foreground)"}
-                transform={`rotate(${i * step + step / 2 - 90} 50 50)`}
-                textAnchor="end"
-              >
-                {slice.label.length > 20 ? `${slice.label.slice(0, 19)}…` : slice.label}
-              </text>
-            </g>
+            <path
+              key={slice.id}
+              d={paths[i]}
+              fill={SLICE_FILLS[i % 2] ?? "var(--card)"}
+              stroke="var(--border)"
+              strokeWidth="0.4"
+            />
           ))}
           <circle cx="50" cy="50" r="8" fill="var(--background)" stroke="var(--primary)" strokeWidth="1" />
+          {/* labels painted last so no neighbouring slice can cover them */}
+          {slices.map((slice, i) => (
+            <text
+              key={`label-${slice.id}`}
+              x="95"
+              y="51"
+              fontSize="3.2"
+              fontWeight="700"
+              fill={i % 2 === 0 ? "var(--primary-foreground)" : "var(--foreground)"}
+              transform={`rotate(${i * step + step / 2 - 90} 50 50)`}
+              textAnchor="end"
+              textLength={Math.min(truncate(slice.label).length * 1.75, 33)}
+              lengthAdjust="spacingAndGlyphs"
+            >
+              {truncate(slice.label)}
+            </text>
+          ))}
         </svg>
         </div>
       </div>
