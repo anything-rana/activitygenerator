@@ -87,19 +87,6 @@ function Index() {
     [store.visible, maxMinutes, maxCost, maxDistance, store.profile.ageBand, night],
   );
 
-  const dailyPick = useMemo(() => {
-    const day = today();
-    const base = store.visible.filter(
-      (adv) => adv.minAge <= store.profile.ageBand && !(night && adv.daylightOnly),
-    );
-    if (!base.length) return null;
-    const seed = [...day].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-    return base[seed % base.length];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store.visible, store.profile.ageBand, night]);
-
-  const scratchRevealed = store.scratch?.day === today() && store.scratch.revealed;
-
   const spin = () => {
     if (!pool.length) {
       toast.error("No adventures match those filters. Loosen them a bit.");
