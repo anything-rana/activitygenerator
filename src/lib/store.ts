@@ -14,18 +14,11 @@ export type Profile = {
   ageBand: 13 | 16 | 18;
 };
 
-export type ScratchState = {
-  day: string;
-  adventureId: string;
-  revealed: boolean;
-};
-
 const KEYS = {
   custom: "dz.custom",
   hidden: "dz.hidden",
   completions: "dz.completions",
   profile: "dz.profile",
-  scratch: "dz.scratch",
 } as const;
 
 function read<T>(key: string, fallback: T): T {
