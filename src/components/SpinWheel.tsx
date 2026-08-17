@@ -110,14 +110,14 @@ export function SpinWheel({
           {slices.map((slice, i) => (
             <text
               key={`label-${slice.id}`}
-              x="46"
-              y="50.9"
-              fontSize="3.1"
+              x="95"
+              y="51"
+              fontSize="3.2"
               fontWeight="700"
               fill={i % 2 === 0 ? "var(--primary-foreground)" : "var(--foreground)"}
               transform={`rotate(${i * step + step / 2 - 90} 50 50)`}
               textAnchor="end"
-              textLength={Math.min(slice.label.length * 1.7, 33)}
+              textLength={Math.min(truncate(slice.label).length * 1.75, 33)}
               lengthAdjust="spacingAndGlyphs"
             >
               {truncate(slice.label)}
