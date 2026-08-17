@@ -231,15 +231,6 @@ function Index() {
             </section>
           )}
 
-          {dailyPick && (
-            <ScratchCard
-              adventure={dailyPick}
-              revealed={Boolean(scratchRevealed)}
-              onReveal={() =>
-                store.setScratch({ day: today(), adventureId: dailyPick.id, revealed: true })
-              }
-            />
-          )}
         </TabsContent>
 
         <TabsContent value="library" className="mt-6 space-y-4">
