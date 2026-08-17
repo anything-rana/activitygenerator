@@ -20,7 +20,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { AdventureForm } from "@/components/AdventureForm";
-import { ScratchCard } from "@/components/ScratchCard";
 import {
   COST_LABEL,
   DISTANCE_LABEL,
@@ -29,7 +28,7 @@ import {
   type Cost,
   type Distance,
 } from "@/lib/adventures";
-import { today, useDriftStore, type Completion } from "@/lib/store";
+import { useDriftStore, type Completion } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -39,12 +38,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Spin the wheel for a free or under-$5 micro-adventure near you, scratch a daily card, and snap photo proof.",
+          "Spin the wheel for a free or under-$5 micro-adventure near you and snap photo proof.",
       },
       { property: "og:title", content: "Drift — random mini-adventures within 3 blocks" },
       {
         property: "og:description",
-        content: "Spin, scratch, snap. Low-cost spontaneous adventures a few blocks from home.",
+        content: "Spin, snap. Low-cost spontaneous adventures a few blocks from home.",
       },
     ],
   }),
@@ -87,19 +86,6 @@ function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [store.visible, maxMinutes, maxCost, maxDistance, store.profile.ageBand, night],
   );
-
-  const dailyPick = useMemo(() => {
-    const day = today();
-    const base = store.visible.filter(
-      (adv) => adv.minAge <= store.profile.ageBand && !(night && adv.daylightOnly),
-    );
-    if (!base.length) return null;
-    const seed = [...day].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-    return base[seed % base.length];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store.visible, store.profile.ageBand, night]);
-
-  const scratchRevealed = store.scratch?.day === today() && store.scratch.revealed;
 
   const spin = () => {
     if (!pool.length) {
@@ -245,15 +231,6 @@ function Index() {
             </section>
           )}
 
-          {dailyPick && (
-            <ScratchCard
-              adventure={dailyPick}
-              revealed={Boolean(scratchRevealed)}
-              onReveal={() =>
-                store.setScratch({ day: today(), adventureId: dailyPick.id, revealed: true })
-              }
-            />
-          )}
         </TabsContent>
 
         <TabsContent value="library" className="mt-6 space-y-4">
