@@ -532,7 +532,7 @@ function ProofDialog({
               adventureId: adventure.id,
               title: adventure.title,
               note: note.trim(),
-              photo,
+              ...(photo ? { photo } : {}),
               at: new Date().toISOString(),
             });
             setNote("");
