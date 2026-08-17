@@ -60,8 +60,9 @@ export function SpinWheel({
         </div>
         <svg
           viewBox="0 0 100 100"
-          className="size-full drop-shadow-[0_0_30px_color-mix(in oklch, var(--primary) 35%, transparent)]"
+          className="size-full"
           style={{
+            filter: "drop-shadow(0 0 24px color-mix(in oklch, var(--primary) 35%, transparent))",
             transform: `rotate(${rotation}deg)`,
             transition: "transform 3.5s cubic-bezier(0.12, 0.72, 0.06, 1)",
           }}
