@@ -29,6 +29,7 @@ import {
   type Distance,
 } from "@/lib/adventures";
 import { useDriftStore, type Completion } from "@/lib/store";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
