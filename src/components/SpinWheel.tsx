@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export type WheelSlice = { id: string; label: string };
@@ -34,8 +34,18 @@ export function SpinWheel({
 }) {
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
+  const timer = useRef<number | null>(null);
   const total = Math.max(slices.length, 1);
   const step = 360 / total;
+
+  const paths = useMemo(
+    () => slices.map((_, i) => slicePath(i, total)),
+    [slices, total],
+  );
+
+  useEffect(() => () => {
+    if (timer.current) window.clearTimeout(timer.current);
+  }, []);
 
   const spin = () => {
     if (spinning || disabled || !slices.length) return;
@@ -45,34 +55,43 @@ export function SpinWheel({
     const next = rotation + base + (360 - (rotation % 360));
     setSpinning(true);
     setRotation(next);
-    window.setTimeout(() => {
+    timer.current = window.setTimeout(() => {
       setSpinning(false);
       const slice = slices[target];
       if (slice) onResult(slice.id);
-    }, 3600);
+    }, 3300);
   };
 
   return (
     <div className="flex flex-col items-center gap-5">
       <div className="relative aspect-square w-full max-w-[300px]">
+        {/* static glow, kept off the animated layer */}
+        <div
+          className="pointer-events-none absolute inset-2 rounded-full"
+          style={{
+            boxShadow:
+              "0 0 34px color-mix(in oklch, var(--primary) 32%, transparent), 0 0 0 1px color-mix(in oklch, var(--primary) 25%, transparent)",
+          }}
+          aria-hidden
+        />
         <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1">
           <div className="size-0 border-x-[9px] border-t-[16px] border-x-transparent border-t-accent" />
         </div>
-        <svg
-          viewBox="0 0 100 100"
+        <div
           className="size-full"
           style={{
-            filter: "drop-shadow(0 0 24px color-mix(in oklch, var(--primary) 35%, transparent))",
-            transform: `rotate(${rotation}deg)`,
-            transition: "transform 3.5s cubic-bezier(0.12, 0.72, 0.06, 1)",
+            transform: `rotate(${rotation}deg) translateZ(0)`,
+            transition: "transform 3.2s cubic-bezier(0.16, 0.84, 0.12, 1)",
+            willChange: spinning ? "transform" : "auto",
+            backfaceVisibility: "hidden",
           }}
-          aria-hidden
         >
+        <svg viewBox="0 0 100 100" className="size-full" shapeRendering="geometricPrecision" aria-hidden>
           <circle cx="50" cy="50" r="49.5" fill="var(--card)" />
           {slices.map((slice, i) => (
             <g key={slice.id}>
               <path
-                d={slicePath(i, total)}
+                d={paths[i]}
                 fill={SLICE_FILLS[i % 2] ?? "var(--card)"}
                 stroke="var(--border)"
                 strokeWidth="0.4"
@@ -92,6 +111,7 @@ export function SpinWheel({
           ))}
           <circle cx="50" cy="50" r="8" fill="var(--background)" stroke="var(--primary)" strokeWidth="1" />
         </svg>
+        </div>
       </div>
 
       <button
