@@ -77,8 +77,9 @@ function Index() {
   );
 
   const slices = useMemo(() => {
-    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 8);
-    return shuffled.map((adv) => ({ id: adv.id, label: adv.title }));
+    const picked =
+      round === 0 ? pool.slice(0, 8) : [...pool].sort(() => Math.random() - 0.5).slice(0, 8);
+    return picked.map((adv) => ({ id: adv.id, label: adv.title }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool, round]);
 
