@@ -28,8 +28,7 @@ import {
   type Cost,
   type Distance,
 } from "@/lib/adventures";
-import { today, useDriftStore, type Completion } from "@/lib/store";
-import { cn } from "@/lib/utils";
+import { useDriftStore, type Completion } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
