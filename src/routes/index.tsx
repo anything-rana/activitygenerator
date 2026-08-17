@@ -38,12 +38,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Spin the wheel for a free or under-$5 micro-adventure near you, scratch a daily card, and snap photo proof.",
+          "Spin the wheel for a free or under-$5 micro-adventure near you and snap photo proof.",
       },
       { property: "og:title", content: "Drift — random mini-adventures within 3 blocks" },
       {
         property: "og:description",
-        content: "Spin, scratch, snap. Low-cost spontaneous adventures a few blocks from home.",
+        content: "Spin, snap. Low-cost spontaneous adventures a few blocks from home.",
       },
     ],
   }),
