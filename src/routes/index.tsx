@@ -1,17 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
-import {
-  Camera,
-  Dice5,
-  EyeOff,
-  Flag,
-  Flame,
-  Pencil,
-  Plus,
-  Sparkles,
-  Trash2,
-  Undo2,
-} from "lucide-react";
+import { Camera, EyeOff, Flag, Flame, Plus, Trash2, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { AdventureForm } from "@/components/AdventureForm";
+import { SpinWheel } from "@/components/SpinWheel";
 import {
   COST_LABEL,
   DISTANCE_LABEL,
@@ -64,8 +54,7 @@ function Index() {
   const [maxCost, setMaxCost] = useState<Cost>(1);
   const [maxDistance, setMaxDistance] = useState<Distance>("3blocks");
   const [current, setCurrent] = useState<Adventure | null>(null);
-  const [spinning, setSpinning] = useState(false);
-  const [editing, setEditing] = useState<Adventure | null>(null);
+  const [round, setRound] = useState(0);
   const [formOpen, setFormOpen] = useState(false);
   const [proofFor, setProofFor] = useState<Adventure | null>(null);
 
@@ -87,21 +76,19 @@ function Index() {
     [store.visible, maxMinutes, maxCost, maxDistance, store.profile.ageBand, night],
   );
 
-  const spin = () => {
-    if (!pool.length) {
-      toast.error("No adventures match those filters. Loosen them a bit.");
-      return;
-    }
-    setSpinning(true);
-    let ticks = 0;
-    const timer = window.setInterval(() => {
-      setCurrent(pool[Math.floor(Math.random() * pool.length)] ?? null);
-      ticks += 1;
-      if (ticks > 8) {
-        window.clearInterval(timer);
-        setSpinning(false);
-      }
-    }, 90);
+  const slices = useMemo(() => {
+    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 8);
+    return shuffled.map((adv) => ({ id: adv.id, label: adv.title }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pool, round]);
+
+  const handleResult = (id: string) => {
+    setCurrent(pool.find((adv) => adv.id === id) ?? null);
+  };
+
+  const reshuffle = () => {
+    setCurrent(null);
+    setRound((r) => r + 1);
   };
 
   const nightBlocked = night && store.profile.ageBand < 16;
