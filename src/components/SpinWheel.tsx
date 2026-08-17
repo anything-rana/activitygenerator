@@ -14,6 +14,14 @@ function polar(cx: number, cy: number, r: number, angleDeg: number) {
 }
 
 function slicePath(index: number, total: number) {
+  return sliceGeometry(index, total);
+}
+
+function truncate(label: string) {
+  return label.length > 22 ? `${label.slice(0, 21)}…` : label;
+}
+
+function sliceGeometry(index: number, total: number) {
   const step = 360 / total;
   const start = index * step;
   const end = start + step;
