@@ -20,7 +20,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { AdventureForm } from "@/components/AdventureForm";
-import { ScratchCard } from "@/components/ScratchCard";
 import {
   COST_LABEL,
   DISTANCE_LABEL,
