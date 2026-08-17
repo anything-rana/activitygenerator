@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 export type WheelSlice = { id: string; label: string };
 
 const SLICE_FILLS = [
-  "hsl(var(--primary))",
-  "hsl(var(--card))",
+  "var(--primary)",
+  "var(--card)",
 ];
 
 function polar(cx: number, cy: number, r: number, angleDeg: number) {
@@ -60,20 +60,20 @@ export function SpinWheel({
         </div>
         <svg
           viewBox="0 0 100 100"
-          className="size-full drop-shadow-[0_0_30px_hsl(var(--primary)/0.35)]"
+          className="size-full drop-shadow-[0_0_30px_color-mix(in oklch, var(--primary) 35%, transparent)]"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: "transform 3.5s cubic-bezier(0.12, 0.72, 0.06, 1)",
           }}
           aria-hidden
         >
-          <circle cx="50" cy="50" r="49.5" fill="hsl(var(--card))" />
+          <circle cx="50" cy="50" r="49.5" fill="var(--card)" />
           {slices.map((slice, i) => (
             <g key={slice.id}>
               <path
                 d={slicePath(i, total)}
-                fill={SLICE_FILLS[i % 2] ?? "hsl(var(--card))"}
-                stroke="hsl(var(--border))"
+                fill={SLICE_FILLS[i % 2] ?? "var(--card)"}
+                stroke="var(--border)"
                 strokeWidth="0.4"
               />
               <text
@@ -81,7 +81,7 @@ export function SpinWheel({
                 y="50"
                 fontSize="4.2"
                 fontWeight="700"
-                fill={i % 2 === 0 ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))"}
+                fill={i % 2 === 0 ? "var(--primary-foreground)" : "var(--foreground)"}
                 transform={`rotate(${i * step + step / 2} 50 50) translate(0 -14)`}
                 textAnchor="middle"
               >
@@ -89,7 +89,7 @@ export function SpinWheel({
               </text>
             </g>
           ))}
-          <circle cx="50" cy="50" r="8" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="1" />
+          <circle cx="50" cy="50" r="8" fill="var(--background)" stroke="var(--primary)" strokeWidth="1" />
         </svg>
       </div>
 
