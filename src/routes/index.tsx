@@ -108,9 +108,19 @@ function Index() {
             Tiny, cheap, nearby adventures. Spin one, do it, snap proof.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold">
-          <Flame className="size-4 text-accent" />
-          {store.streak} day streak
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold">
+            <Flame className="size-4 text-accent" />
+            {store.streak} day streak
+          </div>
+          {store.hidden.length > 0 && (
+            <Button variant="outline" size="sm" onClick={store.unhideAll}>
+              <Undo2 className="size-4" /> Unhide {store.hidden.length}
+            </Button>
+          )}
+          <Button size="sm" onClick={() => setFormOpen(true)}>
+            <Plus className="size-4" /> Add your own
+          </Button>
         </div>
       </header>
 
@@ -118,9 +128,6 @@ function Index() {
         <TabsList className="w-full">
           <TabsTrigger value="spin" className="flex-1">
             Spin
-          </TabsTrigger>
-          <TabsTrigger value="library" className="flex-1">
-            Library
           </TabsTrigger>
           <TabsTrigger value="log" className="flex-1">
             My log
@@ -168,22 +175,20 @@ function Index() {
             {nightBlocked && (
               <p className="mt-4 rounded-xl border border-accent/40 bg-accent/10 px-4 py-3 text-sm">
                 It&apos;s after dark. Outdoor prompts are paused for under-16s — come back in the
-                morning, or pick an indoor idea from the library.
+                morning, or try again tomorrow.
               </p>
             )}
 
-            <Button
-              size="lg"
-              onClick={spin}
-              disabled={spinning || nightBlocked}
-              className="mt-5 w-full text-base font-bold"
-            >
-              <Dice5 className={cn("size-5", spinning && "animate-spin-tick")} />
-              {spinning ? "Spinning…" : "Spin me an adventure"}
-            </Button>
+            <div className="mt-6">
+              <SpinWheel
+                slices={slices}
+                disabled={nightBlocked || !slices.length}
+                onResult={handleResult}
+              />
+            </div>
 
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              {pool.length} adventures match your filters
+              {pool.length} hidden adventures match your filters — spin to reveal one
             </p>
           </section>
 
@@ -201,8 +206,8 @@ function Index() {
                 <Button onClick={() => setProofFor(current)}>
                   <Camera className="size-4" /> Mark complete
                 </Button>
-                <Button variant="outline" onClick={spin}>
-                  <Sparkles className="size-4" /> Something else
+                <Button variant="outline" onClick={reshuffle}>
+                  <Undo2 className="size-4" /> Reshuffle wheel
                 </Button>
                 <Button
                   variant="ghost"
@@ -214,104 +219,21 @@ function Index() {
                 >
                   <EyeOff className="size-4" /> Not for me
                 </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    store.flag(current.id);
+                    toast("Flagged for review. Thanks for looking out.");
+                  }}
+                >
+                  <Flag className="size-4" /> Flag
+                </Button>
               </div>
             </section>
           )}
 
         </TabsContent>
 
-        <TabsContent value="library" className="mt-6 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-bold">{store.visible.length} adventures</h2>
-            <div className="flex gap-2">
-              {store.hidden.length > 0 && (
-                <Button variant="outline" size="sm" onClick={store.unhideAll}>
-                  <Undo2 className="size-4" /> Unhide {store.hidden.length}
-                </Button>
-              )}
-              <Button
-                size="sm"
-                onClick={() => {
-                  setEditing(null);
-                  setFormOpen(true);
-                }}
-              >
-                <Plus className="size-4" /> New
-              </Button>
-            </div>
-          </div>
-
-          <ul className="space-y-3">
-            {store.visible.map((adv) => (
-              <li key={adv.id} className="rounded-2xl border border-border bg-card p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold">{adv.title}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{adv.description}</p>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      <Badge variant="secondary">
-                        {adv.minutes === 60 ? "1 hr" : `${adv.minutes} min`}
-                      </Badge>
-                      <Badge variant="secondary">{COST_LABEL[adv.cost]}</Badge>
-                      <Badge variant="secondary">{DISTANCE_LABEL[adv.distance]}</Badge>
-                      <Badge variant="outline">{adv.minAge}+</Badge>
-                      {adv.custom && <Badge>Community</Badge>}
-                      {adv.flagged && <Badge variant="destructive">Flagged</Badge>}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 flex-col gap-1">
-                    {adv.custom ? (
-                      <>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          aria-label="Edit adventure"
-                          onClick={() => {
-                            setEditing(adv);
-                            setFormOpen(true);
-                          }}
-                        >
-                          <Pencil className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          aria-label="Delete adventure"
-                          onClick={() => {
-                            store.deleteAdventure(adv.id);
-                            toast("Adventure deleted.");
-                          }}
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          aria-label="Flag for review"
-                          onClick={() => {
-                            store.flag(adv.id);
-                            toast("Flagged for review. Thanks for looking out.");
-                          }}
-                        >
-                          <Flag className="size-4" />
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        aria-label="Hide adventure"
-                        onClick={() => store.hide(adv.id)}
-                      >
-                        <EyeOff className="size-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </TabsContent>
 
         <TabsContent value="log" className="mt-6 space-y-3">
           {store.completions.length === 0 ? (
@@ -350,15 +272,15 @@ function Index() {
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit adventure" : "New adventure"}</DialogTitle>
+            <DialogTitle>New adventure</DialogTitle>
           </DialogHeader>
           <AdventureForm
-            initial={editing}
+            initial={null}
             onCancel={() => setFormOpen(false)}
             onSave={(adv) => {
               store.saveAdventure(adv);
               setFormOpen(false);
-              toast.success(editing ? "Adventure updated." : "Adventure added to the library.");
+              toast.success("Adventure added to the wheel.");
             }}
           />
         </DialogContent>
