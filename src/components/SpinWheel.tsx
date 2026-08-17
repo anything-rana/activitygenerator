@@ -78,15 +78,15 @@ export function SpinWheel({
                 strokeWidth="0.4"
               />
               <text
-                x="50"
-                y="50"
-                fontSize="4.2"
+                x="45"
+                y="50.4"
+                fontSize="3.4"
                 fontWeight="700"
                 fill={i % 2 === 0 ? "var(--primary-foreground)" : "var(--foreground)"}
-                transform={`rotate(${i * step + step / 2} 50 50) translate(0 -14)`}
-                textAnchor="middle"
+                transform={`rotate(${i * step + step / 2 - 90} 50 50)`}
+                textAnchor="end"
               >
-                {slice.label.length > 22 ? `${slice.label.slice(0, 21)}…` : slice.label}
+                {slice.label.length > 20 ? `${slice.label.slice(0, 19)}…` : slice.label}
               </text>
             </g>
           ))}
