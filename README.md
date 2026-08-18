@@ -112,3 +112,9 @@ This project is open source and available under the MIT License.
 
 Contributions are welcome! Feel free to submit issues or pull requests to help improve the Spontaneity Engine.
 
+For more projects and resources, visit the [SDAIA Academy GitHub](https://github.com/SDAIAAcademy) organization.
+
+---
+
+**Made with ❤️ by SDAIA Academy**
+
